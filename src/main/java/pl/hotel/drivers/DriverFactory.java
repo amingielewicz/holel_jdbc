@@ -1,8 +1,12 @@
 package pl.hotel.drivers;
 
+import pl.hotel.customer.Customer;
+import pl.hotel.customer.CustomerRepository;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class DriverFactory {
 
@@ -22,14 +26,22 @@ public class DriverFactory {
 
     public static void DbConnection() {
         try {
-            connection = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Połączono z Bazą Danych.");
+            connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            CustomerRepository customerRepository = new CustomerRepository(connection);
+            //customerRepository.create(new Customer("Agata", "Kłos", "72121250252", LocalDate.of(2025, 02, 20)));
+            //customerRepository.update(new Customer("Joanna", "Majer", "60121505698"),4);
+            customerRepository.delete(3);
+            customerRepository.findAll().forEach(customer -> System.out.println(customer.getId() + " "
+                    + customer.getName() + " " + customer.getSurname() + " " + customer.getPesel()));
+
 
         } catch (SQLException e) {
             System.err.println("Niepołączono z Bazą Danych" + e);
         } finally {
             closeConnection(connection);
         }
+
     }
 
 
